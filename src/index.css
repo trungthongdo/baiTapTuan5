@@ -180,7 +180,6 @@ h1 {
   margin-top: 8px;
 }
 
-/* Nút đóng */
 .modal button {
   display: block;
 
@@ -228,7 +227,6 @@ h1 {
   transform: translateY(0);
 }
 
-/* Animation nền */
 @keyframes modalOverlayIn {
   from {
     opacity: 0;
@@ -239,7 +237,6 @@ h1 {
   }
 }
 
-/* Animation hộp */
 @keyframes modalContentIn {
   from {
     opacity: 0;

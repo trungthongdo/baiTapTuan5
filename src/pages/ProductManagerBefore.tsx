@@ -2,35 +2,12 @@ import { useState } from "react";
 import { generateProducts } from "../data/generateProducts";
 import type { Product } from "../types";
 
-// Sinh 10.000 sản phẩm 1 lần khi module được load
 const ALL_PRODUCTS = generateProducts(10000);
 
-/**
- * ============================================================
- * PHIÊN BẢN "TRƯỚC TỐI ƯU"
- * ============================================================
- * Cố tình giữ lại 3 vấn đề hiệu năng phổ biến để đo được sự khác
- * biệt rõ ràng bằng Lighthouse:
- *
- * Vấn đề #1 — Render toàn bộ 10.000 phần tử <li> vào DOM cùng lúc,
- *   dù màn hình chỉ hiển thị được ~15 dòng. Đây là vấn đề GỐC, ảnh
- *   hưởng nặng nhất tới TBT (Total Blocking Time) và điểm Performance.
- *
- * Vấn đề #2 — `filtered` được TÍNH LẠI (duyệt cả mảng 10.000 phần tử)
- *   trên MỖI LẦN RENDER, kể cả khi search không hề thay đổi (không
- *   dùng useMemo).
- *
- * Vấn đề #3 — ProductRowBefore không được React.memo, và nhận 1 hàm
- *   `() => onSelect(product)` MỚI mỗi lần cha render lại. Vì tham
- *   chiếu hàm luôn đổi, React không thể "nhận ra" dòng nào không đổi
- *   dữ liệu để bỏ qua re-render — toàn bộ 10.000 dòng re-render lại
- *   mỗi khi gõ 1 ký tự vào ô tìm kiếm.
- */
 function ProductManagerBefore() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Product | null>(null);
 
-  // KHÔNG dùng useMemo -> tính lại filter mỗi lần component render
   const filtered = ALL_PRODUCTS.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -76,8 +53,6 @@ function ProductRowBefore({
   product: Product;
   onSelect: () => void;
 }) {
-  // Tạo MỚI 1 Intl.NumberFormat cho MỖI dòng, mỗi lần render -> lãng phí,
-  // trong khi đối tượng này hoàn toàn có thể tạo 1 lần rồi dùng lại
   const formatter = new Intl.NumberFormat("vi-VN");
 
   return (
